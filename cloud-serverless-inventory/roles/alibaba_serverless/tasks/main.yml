@@ -1,3 +1,26 @@
+---
+- name: Get Alibaba FC Services
+  shell: aliyun fc ListServices --output json
+  register: ali_fc
+
+- name: Add Function Compute services to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'Alibaba', 'service': 'Function Compute', 'name': item.serviceName, 'region': 'default', 'trigger': 'unknown' }
+    ] }}"
+  loop: "{{ (ali_fc.stdout | from_json).services }}"
+
+- name: Get Serverless App Engine applications
+  shell: aliyun sae ListApplications --RegionId cn-hangzhou --output json
+  register: ali_sae
+
+- name: Add SAE to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'Alibaba', 'service': 'SAE', 'name': item.AppName, 'region': item.RegionId, 'trigger': 'http' }
+    ] }}"
+  loop: "{{ (ali_sae.stdout | from_json).Data.Applications }}"
+
 - name: Validate Alibaba credentials
   shell: aliyun sts GetCallerIdentity
   register: ali_auth
