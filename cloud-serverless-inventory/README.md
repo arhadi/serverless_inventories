@@ -17,7 +17,7 @@ Alibaba Cloud CLI (aliyun)
 
 Ansible Collections
 Define required collections in requirements.yml:
-
+```
 ```yaml
 Copy
 Edit
@@ -26,12 +26,12 @@ collections:
   - name: google.cloud
   - name: azure.azcollection
   - name: community.general
-
+```
 Install them using:
-
+```
 ```bash
 ansible-galaxy collection install -r requirements.yml
----
+```
 
 # roles/aws_serverless/tasks/main.yml
 AWS Serverless Services Covered:
