@@ -1,3 +1,37 @@
+---
+- name: Get Azure Functions
+  shell: az functionapp list --subscription {{ azure_subscription }}
+  register: az_functions
+
+- name: Add Azure Functions to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'Azure', 'service': 'Function App', 'name': item.name, 'region': item.location, 'trigger': item.kind }
+    ] }}"
+  loop: "{{ az_functions.stdout | from_json }}"
+
+- name: Get Logic Apps
+  shell: az logic workflow list --subscription {{ azure_subscription }} --query "[].{name:name, location:location}" --output json
+  register: az_logicapps
+
+- name: Add Logic Apps to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'Azure', 'service': 'Logic App', 'name': item.name, 'region': item.location, 'trigger': 'workflow' }
+    ] }}"
+  loop: "{{ az_logicapps.stdout | from_json }}"
+
+- name: Get Container Apps
+  shell: az containerapp list --subscription {{ azure_subscription }} --output json
+  register: az_ca
+
+- name: Add Container Apps to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'Azure', 'service': 'Container App', 'name': item.name, 'region': item.location, 'trigger': 'http' }
+    ] }}"
+  loop: "{{ az_ca.stdout | from_json }}"
+
 - name: Validate Azure credentials
   shell: az account show
   register: azure_auth
