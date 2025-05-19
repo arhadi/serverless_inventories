@@ -1,3 +1,58 @@
+---
+- name: Get AWS Lambda functions
+  shell: aws lambda list-functions --region {{ aws_region }} --output json
+  register: aws_lambda
+  changed_when: false
+
+- name: Add Lambda functions to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'AWS', 'service': 'Lambda', 'name': item.FunctionName, 'region': aws_region, 'trigger': item.Runtime }
+    ] }}"
+  loop: "{{ (aws_lambda.stdout | from_json).Functions }}"
+  loop_control:
+    label: "{{ item.FunctionName }}"
+
+- name: Get AWS Step Functions
+  shell: aws stepfunctions list-state-machines --region {{ aws_region }} --output json
+  register: aws_sfn
+  changed_when: false
+
+- name: Add Step Functions to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'AWS', 'service': 'Step Functions', 'name': item.name, 'region': aws_region, 'trigger': 'state-machine' }
+    ] }}"
+  loop: "{{ (aws_sfn.stdout | from_json).stateMachines }}"
+
+- name: Get AWS App Runner services
+  shell: aws apprunner list-services --region {{ aws_region }} --output json
+  register: aws_apprunner
+  changed_when: false
+
+- name: Add App Runner services to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'AWS', 'service': 'App Runner', 'name': item.ServiceName, 'region': aws_region, 'trigger': 'http' }
+    ] }}"
+  loop: "{{ (aws_apprunner.stdout | from_json).ServiceSummaryList }}"
+
+- name: Get ECS Fargate tasks
+  shell: aws ecs list-clusters --region {{ aws_region }} --output json
+  register: ecs_clusters
+  changed_when: false
+
+- name: List ECS services per cluster (Fargate)
+  shell: aws ecs list-services --cluster {{ item }} --region {{ aws_region }} --output json
+  register: ecs_services
+  loop: "{{ (ecs_clusters.stdout | from_json).clusterArns }}"
+  when: ecs_clusters.stdout is defined
+
+# Optional: Add ECS Fargate info to inventory (requires deeper inspection to confirm launchType=FARGATE)
+
+# You may add S3 trigger-based Lambda mappings if needed via:
+# aws lambda list-event-source-mappings
+
 - name: Validate AWS credentials
   shell: aws sts get-caller-identity --region {{ item }}
   loop: "{{ aws_regions }}"
