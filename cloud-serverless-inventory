@@ -1,0 +1,26 @@
+cloud-serverless-inventory/
+├── site.yml
+├── inventory/
+│   └── localhost
+├── vars/
+│   └── main.yml
+├── README.md
+└── roles/
+    ├── precheck/
+    │   └── tasks/
+    │       └── main.yml
+    ├── aws_serverless/
+    │   └── tasks/
+    │       └── main.yml
+    ├── gcp_serverless/
+    │   └── tasks/
+    │       └── main.yml
+    ├── azure_serverless/
+    │   └── tasks/
+    │       └── main.yml
+    ├── alibaba_serverless/
+    │   └── tasks/
+    │       └── main.yml
+    └── reporting/
+        └── tasks/
+            └── main.yml
