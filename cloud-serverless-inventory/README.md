@@ -31,6 +31,86 @@ Install them using:
 ansible-galaxy collection install -r requirements.yml
 ```
 
+# Region Support
+Specify regions for each cloud provider in vars/main.yml:
+
+yaml
+Copy
+Edit
+aws_regions:
+  - us-east-1
+  - us-west-2
+
+gcp_regions:
+  - us-central1
+  - europe-west1
+
+azure_regions:
+  - eastus
+  - westeurope
+
+alibaba_regions:
+  - cn-hangzhou
+  - ap-southeast-1
+Each role will iterate over its respective regions to gather serverless service information.
+
+#  Validation and Testing
+Implement validation tasks in each role to ensure required CLI tools are available and credentials are configured. For example, in roles/aws_serverless/tasks/main.yml:
+
+yaml
+Copy
+Edit
+- name: Ensure AWS CLI is installed
+  command: aws --version
+  register: aws_cli
+  failed_when: aws_cli.rc != 0
+  changed_when: false
+
+- name: Validate AWS credentials
+  shell: aws sts get-caller-identity --region {{ item }}
+  loop: "{{ aws_regions }}"
+  register: aws_identity
+  failed_when: aws_identity.rc != 0
+  changed_when: false
+Similar validation tasks should be implemented for GCP, Azure, and Alibaba roles.
+
+#  Reporting
+The reporting role will compile the collected data into JSON, CSV, and HTML formats and send them via email.
+
+## Sample Task: Generate CSV Report
+```
+yaml
+
+- name: Generate CSV report
+  copy:
+    content: |
+      cloud,service,name,region,trigger
+      {% for item in serverless_inventory %}
+      {{ item.cloud }},{{ item.service }},{{ item.name }},{{ item.region }},{{ item.trigger }}
+      {% endfor %}
+    dest: "{{ report_dir }}/serverless_inventory.csv"
+
+```
+## Sample Task: Send Email
+```
+yaml
+
+- name: Send report via email
+  mail:
+    host: "{{ smtp_host }}"
+    port: "{{ smtp_port }}"
+    username: "{{ smtp_user }}"
+    password: "{{ smtp_pass }}"
+    to: "{{ email_to }}"
+    subject: "Multi-Cloud Serverless Inventory Report"
+    body: "Please find the attached serverless inventory reports."
+    attach:
+      - "{{ report_dir }}/serverless_inventory.csv"
+      - "{{ report_dir }}/serverless_inventory.json"
+      - "{{ report_dir }}/serverless_inventory.html"
+
+```
+
 # roles/aws_serverless/tasks/main.yml
 AWS Serverless Services Covered:
 AWS Lambda
