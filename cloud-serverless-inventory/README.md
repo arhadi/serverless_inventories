@@ -111,6 +111,25 @@ yaml
 
 ```
 
+#  Test Playbooks
+Create test playbooks in the tests/ directory to validate each role independently. For example, tests/test_aws.yml:
+```
+yaml
+
+- name: Test AWS Serverless Role
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - aws_serverless
+```
+
+Run the test playbook using:
+```
+bash
+
+ansible-playbook tests/test_aws.yml
+
+```
 # roles/aws_serverless/tasks/main.yml
 AWS Serverless Services Covered:
 AWS Lambda
