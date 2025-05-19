@@ -1,0 +1,9 @@
+aws_region: "us-east-1"
+gcp_project: "your-gcp-project-id"
+azure_subscription: "your-azure-subscription-id"
+report_dir: "reports"
+smtp_host: "smtp.example.com"
+smtp_port: 587
+smtp_user: "report@yourdomain.com"
+smtp_pass: "your-password"
+email_to: "user@example.com"
