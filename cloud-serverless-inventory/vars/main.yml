@@ -1,0 +1,22 @@
+aws_regions:
+  - us-east-1
+  - us-west-2
+
+gcp_regions:
+  - us-central1
+  - europe-west1
+
+azure_regions:
+  - eastus
+  - westeurope
+
+alibaba_regions:
+  - cn-hangzhou
+  - ap-southeast-1
+
+email_to: "recipient@example.com"
+smtp_host: "smtp.example.com"
+smtp_port: 587
+smtp_user: "user@example.com"
+smtp_pass: "yourpassword"
+report_dir: "/tmp"

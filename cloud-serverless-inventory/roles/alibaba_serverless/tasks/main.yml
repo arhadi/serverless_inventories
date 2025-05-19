@@ -1,0 +1,5 @@
+- name: Validate Alibaba credentials
+  shell: aliyun sts GetCallerIdentity
+  register: ali_auth
+  failed_when: ali_auth.rc != 0
+  changed_when: false

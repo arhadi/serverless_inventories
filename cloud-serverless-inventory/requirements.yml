@@ -1,0 +1,5 @@
+collections:
+  - name: amazon.aws
+  - name: google.cloud
+  - name: azure.azcollection
+  - name: community.general

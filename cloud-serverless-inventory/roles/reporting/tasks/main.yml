@@ -1,0 +1,17 @@
+- name: Generate CSV report
+  copy:
+    content: |
+      cloud,service,name,region,trigger
+    dest: "{{ report_dir }}/serverless_inventory.csv"
+
+- name: Send report via email
+  mail:
+    host: "{{ smtp_host }}"
+    port: "{{ smtp_port }}"
+    username: "{{ smtp_user }}"
+    password: "{{ smtp_pass }}"
+    to: "{{ email_to }}"
+    subject: "Multi-Cloud Serverless Inventory Report"
+    body: "Please find the attached serverless inventory reports."
+    attach:
+      - "{{ report_dir }}/serverless_inventory.csv"

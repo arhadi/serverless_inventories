@@ -1,0 +1,17 @@
+- name: Check CLI tools
+  block:
+    - name: Ensure AWS CLI is installed
+      command: aws --version
+      ignore_errors: yes
+
+    - name: Ensure gcloud CLI is installed
+      command: gcloud --version
+      ignore_errors: yes
+
+    - name: Ensure Azure CLI is installed
+      command: az --version
+      ignore_errors: yes
+
+    - name: Ensure Alibaba CLI is installed
+      command: aliyun version
+      ignore_errors: yes

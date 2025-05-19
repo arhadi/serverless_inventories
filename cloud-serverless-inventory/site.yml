@@ -1,0 +1,10 @@
+- name: Multi-cloud Serverless Inventory
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - role: precheck
+    - role: aws_serverless
+    - role: gcp_serverless
+    - role: azure_serverless
+    - role: alibaba_serverless
+    - role: reporting

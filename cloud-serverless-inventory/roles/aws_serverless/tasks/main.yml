@@ -1,0 +1,6 @@
+- name: Validate AWS credentials
+  shell: aws sts get-caller-identity --region {{ item }}
+  loop: "{{ aws_regions }}"
+  register: aws_identity
+  failed_when: aws_identity.rc != 0
+  changed_when: false

@@ -1,0 +1,5 @@
+- name: Validate GCP credentials
+  shell: gcloud auth list
+  register: gcp_auth
+  failed_when: gcp_auth.rc != 0
+  changed_when: false
