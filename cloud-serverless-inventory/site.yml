@@ -1,16 +1,10 @@
----
-- name: Multi-Cloud Serverless Inventory
+- name: Multi-cloud Serverless Inventory
   hosts: localhost
   gather_facts: no
-
-  pre_tasks:
-    - name: Run pre-checks
-      import_role:
-        name: precheck
-
   roles:
-    - aws_serverless
-    - gcp_serverless
-    - azure_serverless
-    - alibaba_serverless
-    - reporting
+    - role: precheck
+    - role: aws_serverless
+    - role: gcp_serverless
+    - role: azure_serverless
+    - role: alibaba_serverless
+    - role: reporting
