@@ -18,7 +18,7 @@ Alibaba Cloud CLI (aliyun)
 Ansible Collections
 Define required collections in requirements.yml:
 
---yaml
+```yaml
 Copy
 Edit
 collections:
@@ -26,13 +26,10 @@ collections:
   - name: google.cloud
   - name: azure.azcollection
   - name: community.general
----
 
 Install them using:
 
---bash
-Copy
-Edit
+```bash
 ansible-galaxy collection install -r requirements.yml
 ---
 
