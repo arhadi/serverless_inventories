@@ -1,3 +1,37 @@
+---
+- name: Get GCP Cloud Functions
+  shell: gcloud functions list --project {{ gcp_project }} --format=json
+  register: gcp_cf
+
+- name: Add Cloud Functions to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'GCP', 'service': 'Cloud Functions', 'name': item.name, 'region': item.region, 'trigger': item.eventTrigger.eventType | default('HTTP') }
+    ] }}"
+  loop: "{{ gcp_cf.stdout | from_json }}"
+
+- name: Get GCP Cloud Run services
+  shell: gcloud run services list --project {{ gcp_project }} --format=json
+  register: gcp_cr
+
+- name: Add Cloud Run to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'GCP', 'service': 'Cloud Run', 'name': item.metadata.name, 'region': item.metadata.annotations['run.googleapis.com/region'], 'trigger': 'http' }
+    ] }}"
+  loop: "{{ gcp_cr.stdout | from_json }}"
+
+- name: Get Workflows
+  shell: gcloud workflows list --project {{ gcp_project }} --format=json
+  register: gcp_workflows
+
+- name: Add Workflows to inventory
+  set_fact:
+    serverless_inventory: "{{ serverless_inventory + [
+      {'cloud': 'GCP', 'service': 'Workflows', 'name': item.name, 'region': item.region, 'trigger': 'workflow' }
+    ] }}"
+  loop: "{{ gcp_workflows.stdout | from_json }}"
+
 - name: Validate GCP credentials
   shell: gcloud auth list
   register: gcp_auth
